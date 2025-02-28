@@ -1,8 +1,102 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "../utils/AxiosInstance";
+import { useNavigate } from "react-router-dom";
 
-const Product = () => {
-  return (
-    <div>Product Page</div>
-  )
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  thumbnail: string;
 }
 
-export default Product
+interface ProductData {
+  products: Product[];
+}
+
+const fetchProductList = async () => {
+  return await axios.get<ProductData>("/product");
+};
+
+const ProductSkeleton = () => {
+  return (
+    <div className="group relative">
+      {/* Image Placeholder */}
+      <div className="aspect-square w-full rounded-md bg-gray-200 animate-pulse lg:aspect-auto lg:h-80"></div>
+
+      <div className="mt-4 flex justify-between">
+        {/* Title Placeholder */}
+        <div>
+          <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+          {/* Description Placeholder */}
+          <div className="mt-1 h-3 bg-gray-200 rounded animate-pulse w-2/3"></div>
+        </div>
+        {/* Price Placeholder */}
+        <div className="h-4 bg-gray-200 rounded animate-pulse w-1/4"></div>
+      </div>
+    </div>
+  );
+};
+
+const Product = () => {
+  const getProductList = useQuery({
+    queryKey: ["productList"],
+    queryFn: fetchProductList,
+  });
+  const navigate = useNavigate()
+  console.log(getProductList.isLoading);
+  console.log(getProductList.data);
+  return (
+    <div className="container mx-auto px-4">
+      <div className="bg-white">
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+            List of Products
+          </h2>
+          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            { getProductList.isLoading
+            ? Array.from({ length: 4 }).map((_, index) => (
+              <ProductSkeleton key={index} />
+            ))
+            : getProductList.data?.data.products.map((product) => {
+              return (
+                <div
+                  key={product.id}
+                  className="group relative"
+                  onClick={() => navigate(`/product/${product.id}`)}
+                >
+                  <img
+                    alt={product.title}
+                    src={product.thumbnail}
+                    className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+                  />
+                  <div className="mt-4 flex justify-between">
+                    <div>
+                      <h3 className="text-sm text-gray-700">
+                        <a>
+                          <span
+                            aria-hidden="true"
+                            className="absolute inset-0"
+                          />
+                          {product.title}
+                        </a>
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {product.description}
+                      </p>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {product.price}$
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Product;
