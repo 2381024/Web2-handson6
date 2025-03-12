@@ -7,6 +7,8 @@ const navigation = [
 	{ name: 'Recipes', to: '/recipes', current: false },
 	{ name: 'Carts', to: '/carts', current: false },
 	{ name: 'Post', to: '/posts', current: false },
+	{ name: 'Comments', to: '/comments', current: false },
+	{ name: 'Todos', to: '/todos', current: false },
 ]
 
 function classNames(...classes: string[]) {
