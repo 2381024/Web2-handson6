@@ -96,7 +96,7 @@ const Recipes = () => {
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-20">
       <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">Recipes</h2>
       {error && <p className="text-red-500 text-center">{error}</p>}
       <div className="mb-4 flex justify-center">
